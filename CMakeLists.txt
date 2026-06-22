@@ -27,15 +27,23 @@ target_sources(RhymeZoneVST PRIVATE
     Source/RhymeZoneAPI.cpp
 )
 
+# JUCE uses libcurl on Linux, WinHTTP on Windows, NSURLSession on macOS
+if(UNIX AND NOT APPLE)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(CURL REQUIRED libcurl)
+    set(CURL_LINK_LIBS ${CURL_LIBRARIES})
+    set(USE_CURL 1)
+else()
+    set(CURL_LINK_LIBS "")
+    set(USE_CURL 0)
+endif()
+
 target_compile_definitions(RhymeZoneVST PUBLIC
     JUCE_WEB_BROWSER=0
-    JUCE_USE_CURL=1
+    JUCE_USE_CURL=${USE_CURL}
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_DISPLAY_SPLASH_SCREEN=0
 )
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(CURL REQUIRED libcurl)
 
 target_link_libraries(RhymeZoneVST PRIVATE
     juce::juce_audio_utils
@@ -43,7 +51,7 @@ target_link_libraries(RhymeZoneVST PRIVATE
     juce::juce_gui_basics
     juce::juce_gui_extra
     juce::juce_core
-    ${CURL_LIBRARIES}
+    ${CURL_LINK_LIBS}
     PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
