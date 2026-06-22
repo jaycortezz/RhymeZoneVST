@@ -63,7 +63,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake g++ libx11-dev libxrandr-dev \
-            libxinerama-dev libxcursor-dev libfreetype6-dev \
+            libxinerama-dev libxcursor-dev libfreetype6-dev libfontconfig1-dev \
             libasound2-dev libcurl4-openssl-dev libgl-dev
 
       - name: Configure CMake
