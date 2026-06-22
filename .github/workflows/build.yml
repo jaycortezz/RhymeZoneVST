@@ -1,0 +1,80 @@
+name: Build RhymeZone VST3
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Windows VST3
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -j4
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: RhymeZone-Windows-VST3
+          path: build/RhymeZoneVST_artefacts/Release/VST3/RhymeZone.vst3
+          retention-days: 30
+
+  build-macos:
+    name: macOS VST3
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -j4
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: RhymeZone-macOS-VST3
+          path: build/RhymeZoneVST_artefacts/Release/VST3/RhymeZone.vst3
+          retention-days: 30
+
+  build-linux:
+    name: Linux VST3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ libx11-dev libxrandr-dev \
+            libxinerama-dev libxcursor-dev libfreetype6-dev \
+            libasound2-dev libcurl4-openssl-dev libgl-dev
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -j4
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: RhymeZone-Linux-VST3
+          path: build/RhymeZoneVST_artefacts/Release/VST3/RhymeZone.vst3
+          retention-days: 30
